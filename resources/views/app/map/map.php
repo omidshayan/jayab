@@ -16,8 +16,20 @@
 
     <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <form action="">
+        <input type="text" id="name" placeholder="نام مکان">
+        <input type="text" id="type" placeholder="نوع (street/shop/...)">
 
+        <textarea id="description" placeholder="توضیحات"></textarea>
+
+        <input type="text" id="lat" placeholder="lat" readonly>
+        <input type="text" id="lng" placeholder="lng" readonly>
+
+        <input type="submit" id="saveBtn" value="ذخیره">
+    </form>
+
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         var map = L.map('map').setView([34.352, 62.204], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -25,7 +37,7 @@
         }).addTo(map);
     </script>
 
-    <!-- change location -->
+    <!-- infos locations -->
     <script>
         var clickMarker;
 
@@ -96,6 +108,32 @@
             alert("GPS پشتیبانی نمی‌شود");
         }
     </script>
+
+
+    <!-- get lat & lng for new name -->
+    <script>
+        var selectedPoint = null;
+
+        map.on('click', function(e) {
+
+            selectedPoint = {
+                lat: e.latlng.lat,
+                lng: e.latlng.lng
+            };
+
+            console.log("Selected:", selectedPoint);
+
+            document.getElementById("lat").value = selectedPoint.lat;
+            document.getElementById("lng").value = selectedPoint.lng;
+
+            L.marker([selectedPoint.lat, selectedPoint.lng])
+                .addTo(map)
+                .bindPopup("مکان انتخاب شد")
+                .openPopup();
+
+        });
+    </script>
+
 
 </body>
 
