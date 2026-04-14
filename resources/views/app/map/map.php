@@ -17,7 +17,7 @@
     <div id="map"></div>
 
     <form action="<?=url('mapInfo/store')?>" method="post">
-        
+
         <input type="text" id="name" name="name" placeholder="نام مکان">
         <input type="text" id="type" name="type" placeholder="نوع (street/shop/...)">
 
@@ -26,7 +26,7 @@
         <input type="text" id="lat" placeholder="lat" name="lat">
         <input type="text" id="lng" placeholder="lng" name="lng">
 
-        <input type="submit" id="saveBtn" value="ذخیره">
+        <input type="submit" id="submit" value="ذخیره">
     </form>
 
 
