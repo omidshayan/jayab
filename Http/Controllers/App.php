@@ -30,10 +30,10 @@ class App
         public function loadNotifications()
         {
                 $branchId = $this->getBranchId();
-                if (isset($_SESSION['trs_admin']['id'])) {
-                        $userId = $_SESSION['trs_admin']['id'];
-                } elseif (isset($_SESSION['trs_employee']['id'])) {
-                        $userId = $_SESSION['trs_employee']['id'];
+                if (isset($_SESSION['jay_admin']['id'])) {
+                        $userId = $_SESSION['jay_admin']['id'];
+                } elseif (isset($_SESSION['jay_employee']['id'])) {
+                        $userId = $_SESSION['jay_employee']['id'];
                 } else {
                         $this->redirect('logout');
                         exit;
@@ -482,20 +482,20 @@ class App
         // get user infos
         public function currentUser()
         {
-                if (isset($_SESSION['trs_admin']) && !empty($_SESSION['trs_admin'])) {
+                if (isset($_SESSION['jay_admin']) && !empty($_SESSION['jay_admin'])) {
                         return [
-                                'id'   => $_SESSION['trs_admin']['id'],
-                                'name' => $_SESSION['trs_admin']['name'],
+                                'id'   => $_SESSION['jay_admin']['id'],
+                                'name' => $_SESSION['jay_admin']['name'],
                                 'role' => 'admin'
                         ];
                 }
 
-                if (isset($_SESSION['trs_employee']) && !empty($_SESSION['trs_employee'])) {
+                if (isset($_SESSION['jay_employee']) && !empty($_SESSION['jay_employee'])) {
                         return [
-                                'id'        => $_SESSION['trs_employee']['id'],
-                                'name'      => $_SESSION['trs_employee']['name'],
+                                'id'        => $_SESSION['jay_employee']['id'],
+                                'name'      => $_SESSION['jay_employee']['name'],
                                 'role'      => 'employee',
-                                'branch_id' => $_SESSION['trs_employee']['branch_id']
+                                'branch_id' => $_SESSION['jay_employee']['branch_id']
                         ];
                 }
 
@@ -610,7 +610,7 @@ class App
         // get branch id
         public function getBranchId()
         {
-                if (!isset($_SESSION['trs_employee']) && !isset($_SESSION['trs_admin']['admin'])) {
+                if (!isset($_SESSION['jay_employee']) && !isset($_SESSION['jay_admin']['admin'])) {
                         $this->redirect('logout');
                         exit;
                 }
@@ -621,11 +621,11 @@ class App
                         return $branches[0]['id'];
                 }
 
-                if (!empty($_SESSION['trs_employee']['branch_id'])) {
-                        return $_SESSION['trs_employee']['branch_id'];
+                if (!empty($_SESSION['jay_employee']['branch_id'])) {
+                        return $_SESSION['jay_employee']['branch_id'];
                 }
 
-                if (!empty($_SESSION['trs_admin']['admin'])) {
+                if (!empty($_SESSION['jay_admin']['admin'])) {
                         return 'ALL';
                 }
 
@@ -642,8 +642,8 @@ class App
         // user, branch exist?
         public function validateUserBranch()
         {
-                if (isset($_SESSION['trs_employee']['branch_id'])) {
-                        $branchId = $_SESSION['trs_employee']['branch_id'];
+                if (isset($_SESSION['jay_employee']['branch_id'])) {
+                        $branchId = $_SESSION['jay_employee']['branch_id'];
 
                         $branchExists = $this->db->select('SELECT id FROM branches WHERE id = ?', [$branchId])->fetch();
 

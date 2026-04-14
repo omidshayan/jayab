@@ -31,8 +31,8 @@
           <div class="text-avatar">
             <div>
               <?php
-              if (isset($_SESSION['trs_employee'])) {
-                echo $_SESSION['trs_employee']['name'];
+              if (isset($_SESSION['jay_employee'])) {
+                echo $_SESSION['jay_employee']['name'];
               }
               ?>
             </div>

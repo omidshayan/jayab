@@ -35,7 +35,7 @@ trait Middleware
         // check permissions
         if ($requirePermission && $requiredPermission) {
             if (!$this->hasAccess($requiredPermission)) {
-                $id = $_SESSION['trs_admin']['id'] ?? ($_SESSION['trs_employee']['id'] ?? null);
+                $id = $_SESSION['jay_admin']['id'] ?? ($_SESSION['jay_employee']['id'] ?? null);
 
                 if ($id) {
                     $user = $this->db->select('SELECT * FROM employees WHERE id = ?', [$id])->fetch();
@@ -65,8 +65,8 @@ trait Middleware
     // user isLoggedIn
     public function isLoggedIn()
     {
-        $adminLoggedIn = isset($_SESSION['trs_admin']['id']) && isset($_SESSION['trs_admin']['name']);
-        $employeeLoggedIn = isset($_SESSION['trs_employee']['id']) && isset($_SESSION['trs_employee']['name']);
+        $adminLoggedIn = isset($_SESSION['jay_admin']['id']) && isset($_SESSION['jay_admin']['name']);
+        $employeeLoggedIn = isset($_SESSION['jay_employee']['id']) && isset($_SESSION['jay_employee']['name']);
 
         if (!$adminLoggedIn && !$employeeLoggedIn) {
             $this->redirect('login');
@@ -96,14 +96,14 @@ trait Middleware
     // check users permissions
     function hasAccess($page)
     {
-        if (isset($_SESSION['trs_admin']['permissions']) && is_array($_SESSION['trs_admin']['permissions'])) {
-            if (in_array($page, $_SESSION['trs_admin']['permissions'])) {
+        if (isset($_SESSION['jay_admin']['permissions']) && is_array($_SESSION['jay_admin']['permissions'])) {
+            if (in_array($page, $_SESSION['jay_admin']['permissions'])) {
                 return true;
             }
         }
 
-        if (isset($_SESSION['trs_employee']['permissions']) && is_array($_SESSION['trs_employee']['permissions'])) {
-            if (in_array($page, $_SESSION['trs_employee']['permissions'])) {
+        if (isset($_SESSION['jay_employee']['permissions']) && is_array($_SESSION['jay_employee']['permissions'])) {
+            if (in_array($page, $_SESSION['jay_employee']['permissions'])) {
                 return true;
             }
         }
@@ -116,10 +116,10 @@ trait Middleware
     {
         unset($request['csrf_token']);
 
-        if (isset($_SESSION['trs_admin']['name'])) {
-            $request['who_it'] = $_SESSION['trs_admin']['name'];
-        } elseif (isset($_SESSION['trs_employee']['name'])) {
-            $request['who_it'] = $_SESSION['trs_employee']['name'];
+        if (isset($_SESSION['jay_admin']['name'])) {
+            $request['who_it'] = $_SESSION['jay_admin']['name'];
+        } elseif (isset($_SESSION['jay_employee']['name'])) {
+            $request['who_it'] = $_SESSION['jay_employee']['name'];
         } else {
             require_once(BASE_PATH . '/notAccess.php');
             exit();
