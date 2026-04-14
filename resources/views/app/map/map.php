@@ -69,7 +69,21 @@
 
         });
     </script>
+<style>
+.map-label {
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: bold;
 
+    background: rgba(255,255,255,0.85);
+    padding: 3px 8px;
+    border-radius: 6px;
+
+    border: 1px solid #ccc;
+
+    transform: translate(-50%, -50%);
+}
+</style>
     <!-- get my location -->
     <script>
         var userMarker;
@@ -121,20 +135,42 @@
             .then(res => res.json())
             .then(res => {
 
-                console.log(res); // فقط همین
 
                 if (!res.success || !res.data) return;
+
+                let zoom = map.getZoom();
 
                 res.data.forEach(place => {
 
                     let name = place.street_name ? place.street_name : place.name;
 
-                    L.marker([place.lat, place.lng])
-                        .addTo(map)
-                        .bindPopup(name);
+                    let marker = L.marker([place.lat, place.lng], {
+                        icon: L.divIcon({
+                            className: 'map-label',
+                            html: name
+                        })
+                    });
+
+                    if (zoom >= 18) {
+                        marker.addTo(map);
+                    }
+
+                    map.on('zoomend', function() {
+
+                        if (map.getZoom() >= 18) {
+                            marker.addTo(map);
+                        } else {
+                            map.removeLayer(marker);
+                        }
+
+                    });
 
                 });
+                // اجرا در تغییر زوم
+                map.on('zoomend', toggleLabels);
 
+                // اجرای اولیه
+                toggleLabels();
             })
             .catch(err => console.log("FETCH ERROR:", err));
     </script>
