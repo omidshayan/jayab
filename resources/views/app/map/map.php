@@ -25,11 +25,37 @@
         }).addTo(map);
     </script>
 
-    <!-- get location -->
+    <!-- change location -->
+    <script>
+        var clickMarker;
+
+        map.on('click', function(e) {
+
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            console.log("Clicked Location:", lat, lng);
+
+            if (clickMarker) {
+                map.removeLayer(clickMarker);
+            }
+
+            clickMarker = L.marker([lat, lng])
+                .addTo(map)
+                .bindPopup(
+                    "📍 مکان انتخاب شده<br>" +
+                    "Lat: " + lat.toFixed(6) + "<br>" +
+                    "Lng: " + lng.toFixed(6)
+                )
+                .openPopup();
+
+        });
+    </script>
+
+    <!-- get my location -->
     <script>
         var userMarker;
 
-        // 🧭 بررسی پشتیبانی GPS
         if (navigator.geolocation) {
 
             navigator.geolocation.watchPosition(
@@ -40,20 +66,20 @@
 
                     console.log("User Location:", lat, lng);
 
-                    // اگر مارکر وجود ندارد → بساز
                     if (!userMarker) {
 
                         userMarker = L.marker([lat, lng])
                             .addTo(map)
-                            .bindPopup("📍 موقعیت فعلی شما")
+                            .bindPopup("📍 موقعیت شما")
                             .openPopup();
 
-                        // زوم روی کاربر
+                        // فقط بار اول زوم کن
                         map.setView([lat, lng], 15);
 
                     } else {
-                        // فقط آپدیت موقعیت
+
                         userMarker.setLatLng([lat, lng]);
+
                     }
 
                 },
@@ -67,10 +93,10 @@
             );
 
         } else {
-            alert("GPS در این مرورگر پشتیبانی نمی‌شود");
+            alert("GPS پشتیبانی نمی‌شود");
         }
     </script>
-    
+
 </body>
 
 </html>
