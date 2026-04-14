@@ -72,14 +72,15 @@
     <style>
         .map-label {
             white-space: nowrap;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
 
-            background: rgba(255, 255, 255, 0.85);
-            padding: 3px 8px;
-            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 10px;
+            border-radius: 8px;
 
             border: 1px solid #ccc;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 
             transform: translate(-50%, -50%);
         }
@@ -129,69 +130,54 @@
 
     <!-- get all locations -->
     <script>
-        let url = "<?= url('get-places') ?>";
+fetch("<?= url('get-places') ?>")
+.then(res => res.json())
+.then(res => {
 
-        fetch(url)
-            .then(res => res.json())
-            .then(res => {
+    if (!res.success || !res.data) return;
 
-                if (!res.success || !res.data) return;
+    res.data.forEach(place => {
 
-                let zoomLimit = 18;
+        if (place.points) {
 
-                res.data.forEach(place => {
+            let coords = JSON.parse(place.points);
 
-                    let name = place.street_name ? place.street_name : place.name;
-
-                    // فقط نقطه → تبدیل به label ساده
-                    let label = L.marker([place.lat, place.lng], {
-                        icon: L.divIcon({
-                            className: 'map-label',
-                            html: name
-                        })
-                    });
-
-                    function updateVisibility() {
-                        if (map.getZoom() >= zoomLimit) {
-                            if (!map.hasLayer(label)) {
-                                label.addTo(map);
-                            }
-                        } else {
-                            if (map.hasLayer(label)) {
-                                map.removeLayer(label);
-                            }
-                        }
-                    }
-
-                    map.on('zoomend', updateVisibility);
-
-                    updateVisibility();
-                });
-
-            })
-            .catch(err => console.log("FETCH ERROR:", err));
-    </script>
-    <script>
-        let tempPoints = [];
-        let tempLine = null;
-
-        map.on('click', function(e) {
-
-            tempPoints.push([e.latlng.lat, e.latlng.lng]);
-
-            if (tempLine) {
-                map.removeLayer(tempLine);
-            }
-
-            tempLine = L.polyline(tempPoints, {
-                color: 'red'
+            let line = L.polyline(coords, {
+                color: '#2b8cbe',
+                weight: 4
             }).addTo(map);
 
-            // 👇 اینجا باید آپدیت شود
-            document.getElementById("points").value = JSON.stringify(tempPoints);
+            let center = line.getBounds().getCenter();
 
-            console.log(tempPoints);
-        });
+            L.marker(center, {
+                icon: L.divIcon({
+                    className: 'map-label',
+                    html: place.name
+                })
+            }).addTo(map);
+        }
+
+    });
+
+});
+    </script>
+    <script>
+let tempPoints = [];
+let tempLine = null;
+
+map.on('click', function(e) {
+
+    tempPoints.push([e.latlng.lat, e.latlng.lng]);
+
+    if (tempLine) {
+        map.removeLayer(tempLine);
+    }
+
+    tempLine = L.polyline(tempPoints, { color: 'red' }).addTo(map);
+
+    document.getElementById("points").value =
+        JSON.stringify(tempPoints);
+});
     </script>
 
 
