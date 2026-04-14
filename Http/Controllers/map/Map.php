@@ -16,11 +16,25 @@ class Map extends App
     // mapInfoStore
     public function mapInfoStore($request)
     {
-        // $this->middleware(true, true, 'general', true, $request);
-        $this->db->insert('places', array_keys($request), $request);
-        $this->flashMessage('success', _success);
-    }
+        $street = $this->db->select(
+            "SELECT id FROM streets WHERE name = ?",
+            [$request['name']]
+        )->fetch();
 
+        if ($street) {
+            $street_id = $street['id'];
+        } else {
+            $this->db->insert('streets', ['name'], [
+                'name' => $request['name']
+            ]);
+            $street_id = $this->db->lastInsertId();
+        }
+
+        $request['street_id'] = $street_id;
+
+        $this->db->insert('places', array_keys($request), $request);
+        $this->flashMessage('success', 'ok');
+    }
     // getPlaces
     public function getPlaces()
     {
