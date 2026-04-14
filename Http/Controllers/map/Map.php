@@ -13,9 +13,10 @@ class Map extends App
         require_once(BASE_PATH . '/resources/views/app/map/map.php');
     }
 
-    // change password
-    public function changePasswordStore($request, $id)
+    // mapInfoStore
+    public function mapInfoStore($request)
     {
+        dd($request);
         $this->middleware(true, true, 'general', true, $request);
 
         if (empty($request['oldPassword']) || empty($request['newPassword']) || empty($request['newPasswordR'])) {

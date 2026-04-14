@@ -16,14 +16,15 @@
 
     <div id="map"></div>
 
-    <form action="">
-        <input type="text" id="name" placeholder="نام مکان">
-        <input type="text" id="type" placeholder="نوع (street/shop/...)">
+    <form action="<?=url('mapInfo/store')?>" method="post">
+        
+        <input type="text" id="name" name="name" placeholder="نام مکان">
+        <input type="text" id="type" name="type" placeholder="نوع (street/shop/...)">
 
-        <textarea id="description" placeholder="توضیحات"></textarea>
+        <textarea id="description" name="description" placeholder="توضیحات"></textarea>
 
-        <input type="text" id="lat" placeholder="lat" readonly>
-        <input type="text" id="lng" placeholder="lng" readonly>
+        <input type="text" id="lat" placeholder="lat" name="lat">
+        <input type="text" id="lng" placeholder="lng" name="lng">
 
         <input type="submit" id="saveBtn" value="ذخیره">
     </form>
