@@ -2,6 +2,6 @@ RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.+)$ transport-sis/index.php [QSA,L]
+RewriteRule ^(.+)$ jayab/index.php [QSA,L]
 Options -Indexes 
 

@@ -10,10 +10,10 @@ include_once('lang/' . $_COOKIE['lang'] . '.php');
 require_once 'helper.php';
 //config
 define('BASE_PATH', __DIR__);
-define('CURRENT_DOMAIN', currentDomain() . '/transport-sis');
+define('CURRENT_DOMAIN', currentDomain() . '/jayab');
 define('DISPLAY_ERROR', true);
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'transport_sis');
+define('DB_NAME', 'jayab_sis');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('WAREHOUSE_ID', 99099);
