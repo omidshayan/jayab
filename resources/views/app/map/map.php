@@ -29,6 +29,8 @@
 
         <textarea id="description" name="description" placeholder="توضیحات"></textarea>
 
+        <input type="text" name="points" id="points">
+
         <input type="text" id="lat" placeholder="lat" name="lat">
         <input type="text" id="lng" placeholder="lng" name="lng">
         <input type="text" name="street_name" placeholder="نام خیابان">
@@ -43,7 +45,6 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
     </script>
-
 
     <!-- infos locations -->
     <script>
@@ -66,24 +67,23 @@
                     "Lng: " + lng.toFixed(6)
                 )
                 .openPopup();
-
         });
     </script>
-<style>
-.map-label {
-    white-space: nowrap;
-    font-size: 12px;
-    font-weight: bold;
+    <style>
+        .map-label {
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: bold;
 
-    background: rgba(255,255,255,0.85);
-    padding: 3px 8px;
-    border-radius: 6px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 3px 8px;
+            border-radius: 6px;
 
-    border: 1px solid #ccc;
+            border: 1px solid #ccc;
 
-    transform: translate(-50%, -50%);
-}
-</style>
+            transform: translate(-50%, -50%);
+        }
+    </style>
     <!-- get my location -->
     <script>
         var userMarker;
@@ -135,46 +135,64 @@
             .then(res => res.json())
             .then(res => {
 
-
                 if (!res.success || !res.data) return;
 
-                let zoom = map.getZoom();
+                let zoomLimit = 18;
 
                 res.data.forEach(place => {
 
                     let name = place.street_name ? place.street_name : place.name;
 
-                    let marker = L.marker([place.lat, place.lng], {
+                    // فقط نقطه → تبدیل به label ساده
+                    let label = L.marker([place.lat, place.lng], {
                         icon: L.divIcon({
                             className: 'map-label',
                             html: name
                         })
                     });
 
-                    if (zoom >= 18) {
-                        marker.addTo(map);
+                    function updateVisibility() {
+                        if (map.getZoom() >= zoomLimit) {
+                            if (!map.hasLayer(label)) {
+                                label.addTo(map);
+                            }
+                        } else {
+                            if (map.hasLayer(label)) {
+                                map.removeLayer(label);
+                            }
+                        }
                     }
 
-                    map.on('zoomend', function() {
+                    map.on('zoomend', updateVisibility);
 
-                        if (map.getZoom() >= 18) {
-                            marker.addTo(map);
-                        } else {
-                            map.removeLayer(marker);
-                        }
-
-                    });
-
+                    updateVisibility();
                 });
-                // اجرا در تغییر زوم
-                map.on('zoomend', toggleLabels);
 
-                // اجرای اولیه
-                toggleLabels();
             })
             .catch(err => console.log("FETCH ERROR:", err));
     </script>
+    <script>
+        let tempPoints = [];
+        let tempLine = null;
 
+        map.on('click', function(e) {
+
+            tempPoints.push([e.latlng.lat, e.latlng.lng]);
+
+            if (tempLine) {
+                map.removeLayer(tempLine);
+            }
+
+            tempLine = L.polyline(tempPoints, {
+                color: 'red'
+            }).addTo(map);
+
+            // 👇 اینجا باید آپدیت شود
+            document.getElementById("points").value = JSON.stringify(tempPoints);
+
+            console.log(tempPoints);
+        });
+    </script>
 
 
     <!-- get lat & lng for new name -->
