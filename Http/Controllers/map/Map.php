@@ -14,31 +14,40 @@ class Map extends App
     }
 
     // mapInfoStore
-    public function mapInfoStore($request)
-    {
-        $street = $this->db->select(
-            "SELECT id FROM streets WHERE name = ?",
-            [$request['name']]
-        )->fetch();
+public function mapInfoStore($request)
+{
+    $streetName = $request['street_name'];
 
-        if ($street) {
-            $street_id = $street['id'];
-        } else {
-            $this->db->insert('streets', ['name'], [
-                'name' => $request['name']
-            ]);
-            $street_id = $this->db->lastInsertId();
-        }
+    $street = $this->db->select(
+        "SELECT id FROM streets WHERE name = ?",
+        [$streetName]
+    )->fetch();
 
-        $request['street_id'] = $street_id;
-
-        $this->db->insert('places', array_keys($request), $request);
-        $this->flashMessage('success', 'ok');
+    if ($street) {
+        $street_id = $street['id'];
+    } else {
+        $this->db->insert('streets', ['name'], [
+            'name' => $streetName
+        ]);
+        $street_id = $this->db->lastInsertId();
     }
+
+    unset($request['street_name']); // مهم
+    $request['street_id'] = $street_id;
+
+    $this->db->insert('places', array_keys($request), $request);
+
+    $this->flashMessage('success', 'ok');
+}
+
     // getPlaces
     public function getPlaces()
     {
-        $places = $this->db->select('SELECT * FROM places')->fetchAll();
+        $places = $this->db->select("
+        SELECT p.*, s.name AS street_name
+        FROM places p
+        LEFT JOIN streets s ON p.street_id = s.id
+    ")->fetchAll();
 
         $this->send_json_response(true, '', $places);
     }

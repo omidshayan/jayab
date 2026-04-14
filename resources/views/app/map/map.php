@@ -19,13 +19,19 @@
     <form action="<?= url('mapInfo/store') ?>" method="post">
 
         <input type="text" id="name" name="name" placeholder="نام مکان">
-        <input type="text" id="type" name="type" placeholder="نوع (street/shop/...)">
+
+        <select name="type">
+            <option value="street">خیابان</option>
+            <option value="road">جاده</option>
+            <option value="alley">کوچه</option>
+            <option value="shop">فروشگاه</option>
+        </select>
 
         <textarea id="description" name="description" placeholder="توضیحات"></textarea>
 
         <input type="text" id="lat" placeholder="lat" name="lat">
         <input type="text" id="lng" placeholder="lng" name="lng">
-
+        <input type="text" name="street_name" placeholder="نام خیابان">
         <input type="submit" id="submit" value="ذخیره">
     </form>
 
@@ -37,6 +43,7 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
     </script>
+
 
     <!-- infos locations -->
     <script>
@@ -106,26 +113,31 @@
         }
     </script>
 
-<script>
-    let url = "<?= url('get-places') ?>";
+    <!-- get all locations -->
+    <script>
+        let url = "<?= url('get-places') ?>";
 
-    fetch(url)
-        .then(res => res.json())
-        .then(res => {
+        fetch(url)
+            .then(res => res.json())
+            .then(res => {
 
-            console.log("DATA:", res);
+                console.log(res); // فقط همین
 
-            if (!res.success || !res.data) return;
+                if (!res.success || !res.data) return;
 
-            res.data.forEach(place => {
-    L.marker([place.lat, place.lng])
-        .addTo(map)
-        .bindPopup(place.name);
-});
+                res.data.forEach(place => {
 
-        })
-        .catch(err => console.log("FETCH ERROR:", err));
-</script>
+                    let name = place.street_name ? place.street_name : place.name;
+
+                    L.marker([place.lat, place.lng])
+                        .addTo(map)
+                        .bindPopup(name);
+
+                });
+
+            })
+            .catch(err => console.log("FETCH ERROR:", err));
+    </script>
 
 
 
