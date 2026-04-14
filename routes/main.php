@@ -23,9 +23,8 @@ require_once 'user-agent.php';
 // cron job
 require_once 'cron-job/cron_job.php';
 
-
-// shipments
-require_once 'basic-sections/locations.php';
+// map
+require_once 'map/map.php';
 
 
 

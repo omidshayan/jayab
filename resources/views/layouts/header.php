@@ -54,37 +54,17 @@
             </a>
           </li>
 
-          <!-- shipments -->
-          <?php if ($this->hasAccess('general')): ?>
-            <li class="sidebar-menu ri-dashboard-line sidebar-menu-item has-dropdown <?= isActive(['add-shipment', 'shipments']) ?>">
-              <a href="#" class="d-flex align-center justify-between dddd">
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w17" viewBox="0 0 24 24">
-                    <path d="M20 3h-2V1h-2v2H8V1H6v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM4 5h16v12H4V5zm9 6h-2v2h-2v-2H7v-2h2V7h2v2h2v2z" />
-                  </svg>
-                  <span class="mr5">مدیریت بارها</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w14 sidebar-arrow" viewBox="0 0 16 16">
-                  <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+          <!-- map -->
+          <li class="sidebar-menu  <?= isActive('dashboard') ?>">
+            <a href="<?= url('show/map') ?>" target="_blank" class="d-flex align-center justify-between">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w17" viewBox="0 0 16 16">
+                  <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z" />
                 </svg>
-              </a>
-              <ul class="sidebar-dropdown-menu">
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('add-shipment') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('add-shipment', 'sub-menu-focused') ?>"> ◂
-                      ثبت بار جدید</li>
-                  </a>
-                <?php endif; ?>
-
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('shipments') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('shipments', 'sub-menu-focused') ?>"> ◂
-                      نمایش بارهای ثبت شده</li>
-                  </a>
-                <?php endif; ?>
-              </ul>
-            </li>
-          <?php endif; ?>
+                <span class="mr5">نقشه</span>
+              </span>
+            </a>
+          </li>
 
           <!-- employees -->
           <?php if ($this->hasAccess('general')): ?>
@@ -157,85 +137,6 @@
             </li>
           <?php endif; ?>
 
-          <!-- expenses -->
-          <?php if ($this->hasAccess('general')): ?>
-            <li class="sidebar-menu ri-dashboard-line sidebar-menu-item has-dropdown <?= isActive(['add-expense', 'expenses', 'expenses_categories']) ?>">
-              <a href="#" class="d-flex align-center justify-between dddd">
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w17" viewBox="0 0 24 24">
-                    <path d="M20 3h-2V1h-2v2H8V1H6v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM4 5h16v12H4V5zm9 6h-2v2h-2v-2H7v-2h2V7h2v2h2v2z" />
-                  </svg>
-                  <span class="mr5">مصارف</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w14 sidebar-arrow" viewBox="0 0 16 16">
-                  <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                </svg>
-              </a>
-              <ul class="sidebar-dropdown-menu">
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('add-expense') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('add-expense', 'sub-menu-focused') ?>"> ◂
-                      ثبت مصرفی</li>
-                  </a>
-                <?php endif; ?>
-
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('expenses') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('expenses', 'sub-menu-focused') ?>"> ◂
-                      نمایش مصارف</li>
-                  </a>
-                <?php endif; ?>
-
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('expenses_categories') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('expenses_categories', 'sub-menu-focused') ?>"> ◂
-                      مدیریت دسته بندی‌ها</li>
-                  </a>
-                <?php endif; ?>
-              </ul>
-            </li>
-          <?php endif; ?>
-
-          <!-- main settings for me -->
-          <!-- <?php if (
-                  $this->hasAccess('settings') &&
-                  isset($_SESSION['settings']['warehouse']) &&
-                  $_SESSION['settings']['warehouse'] == 1
-                ): ?>
-            <li class="sidebar-menu ri-dashboard-line sidebar-menu-item has-dropdown">
-              <a href="#" class="d-flex align-center justify-between dddd">
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w17" viewBox="0 0 24 24">
-                    <path d="M20 3h-2V1h-2v2H8V1H6v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM4 5h16v12H4V5zm9 6h-2v2h-2v-2H7v-2h2V7h2v2h2v2z" />
-                  </svg>
-                  <span class="mr5">تنظیمات سیستم</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w14 sidebar-arrow" viewBox="0 0 16 16">
-                  <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                </svg>
-              </a>
-              <ul class="sidebar-dropdown-menu">
-                <?php if ($this->hasAccess('addExpenses')): ?>
-                  <a href="<?= url('warehouses') ?>">
-                    <li class="sidebar-dropdown-menu-item">مدیریت انبارها</li>
-                  </a>
-                <?php endif; ?>
-
-                <?php if ($this->hasAccess('showExpenses')): ?>
-                  <a href="<?= url('branches') ?>">
-                    <li class="sidebar-dropdown-menu-item">مدیریت شعبات</li>
-                  </a>
-                <?php endif; ?>
-
-                <?php if ($this->hasAccess('showExpenses')): ?>
-                  <a href="<?= url('funds') ?>">
-                    <li class="sidebar-dropdown-menu-item">مدیریت صندوق‌ها</li>
-                  </a>
-                <?php endif; ?>
-
-              </ul>
-            </li>
-          <?php endif; ?> -->
 
           <!-- basic sections -->
           <!-- <?php if ($this->hasAccess('general')): ?>
@@ -306,43 +207,6 @@
               </ul>
             </li>
           <?php endif; ?> -->
-
-          <!-- basic sections -->
-          <?php if ($this->hasAccess('general')): ?>
-            <li class="sidebar-menu ri-dashboard-line sidebar-menu-item has-dropdown <?= isActive(['locations', 'location-details', 'cargo-types', 'manage-branches']) ?>">
-              <a href="#" class="d-flex align-center justify-between dddd">
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w17" viewBox="0 0 24 24">
-                    <path d="M16.5 13a1.5 1.5 0 1 1-1.5 1.5A1.5 1.5 0 0 1 16.5 13m-9 0a1.5 1.5 0 1 1-1.5 1.5A1.5 1.5 0 0 1 7.5 13m9 3.5c1.7 0 3 .9 3 2v.5h-15V18c0-1.1 1.3-2 3-2.5V16c.3.1.6.2 1 .2.6 0 1.1-.1 1.5-.2.6-.1 1.1-.1 1.5-.1.6 0 1.1 0 1.5.1.6.1 1 .2 1.5.2zm-5-3c1.9 0 3.5 1.6 3.5 3.5s-1.6 3.5-3.5 3.5S8.5 18.9 8.5 17s1.6-3.5 3.5-3.5zM22 17c0-2.2-2.1-4-5.5-4h-9C4.1 13 2 14.8 2 17v4h20v-4zm-9.5-6C14.7 11 17 8.7 17 5.5S14.7 0 12.5 0 8 2.3 8 5.5s2.3 5.5 4.5 5.5zm0-9C14.1 2 15 3.9 15 5.5S14.1 9 12.5 9s-2.5-1.1-2.5-3.5S10.9 2 12.5 2z" />
-                  </svg>
-                  <span class="mr5">بخش‌های پایه</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w14 sidebar-arrow" viewBox="0 0 16 16">
-                  <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                </svg>
-              </a>
-              <ul class="sidebar-dropdown-menu">
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('manage-branches') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('manage-branches', 'sub-menu-focused') ?>"> ◂
-                      مدیریت شعبات</li>
-                  </a>
-                <?php endif; ?>
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('locations') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('locations', 'sub-menu-focused') ?>"> ◂
-                      مدیریت موقعیت‌ها</li>
-                  </a>
-                <?php endif; ?>
-                <?php if ($this->hasAccess('general')): ?>
-                  <a href="<?= url('cargo-types') ?>">
-                    <li class="sidebar-dropdown-menu-item <?= isActive('cargo-types', 'sub-menu-focused') ?>"> ◂
-                      مدیریت نوعیت بار‌ها</li>
-                  </a>
-                <?php endif; ?>
-              </ul>
-            </li>
-          <?php endif; ?>
 
           <!-- profile -->
           <li class="sidebar-menu <?= isActive('profile') ?>">
