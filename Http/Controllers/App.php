@@ -290,13 +290,14 @@ class App
         }
 
         // send json response for clinet
-        function send_json_response($error = false, $message = _success, $id = '')
+        function send_json_response($error = false, $message = _success, $data = '')
         {
                 $responseArray = array(
                         'success' => $error,
                         'message' => $message,
-                        'id' => $id
+                        'data' => $data
                 );
+
                 header('Content-Type: application/json');
                 echo json_encode($responseArray);
                 exit();

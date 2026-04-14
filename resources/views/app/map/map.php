@@ -16,7 +16,7 @@
 
     <div id="map"></div>
 
-    <form action="<?=url('mapInfo/store')?>" method="post">
+    <form action="<?= url('mapInfo/store') ?>" method="post">
 
         <input type="text" id="name" name="name" placeholder="نام مکان">
         <input type="text" id="type" name="type" placeholder="نوع (street/shop/...)">
@@ -47,8 +47,6 @@
             var lat = e.latlng.lat;
             var lng = e.latlng.lng;
 
-            console.log("Clicked Location:", lat, lng);
-
             if (clickMarker) {
                 map.removeLayer(clickMarker);
             }
@@ -76,8 +74,6 @@
 
                     var lat = position.coords.latitude;
                     var lng = position.coords.longitude;
-
-                    console.log("User Location:", lat, lng);
 
                     if (!userMarker) {
 
@@ -110,6 +106,28 @@
         }
     </script>
 
+<script>
+    let url = "<?= url('get-places') ?>";
+
+    fetch(url)
+        .then(res => res.json())
+        .then(res => {
+
+            console.log("DATA:", res);
+
+            if (!res.success || !res.data) return;
+
+            res.data.forEach(place => {
+    L.marker([place.lat, place.lng])
+        .addTo(map)
+        .bindPopup(place.name);
+});
+
+        })
+        .catch(err => console.log("FETCH ERROR:", err));
+</script>
+
+
 
     <!-- get lat & lng for new name -->
     <script>
@@ -121,8 +139,6 @@
                 lat: e.latlng.lat,
                 lng: e.latlng.lng
             };
-
-            console.log("Selected:", selectedPoint);
 
             document.getElementById("lat").value = selectedPoint.lat;
             document.getElementById("lng").value = selectedPoint.lng;

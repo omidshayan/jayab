@@ -20,4 +20,12 @@ class Map extends App
         $this->db->insert('places', array_keys($request), $request);
         $this->flashMessage('success', _success);
     }
+
+    // getPlaces
+    public function getPlaces()
+    {
+        $places = $this->db->select('SELECT * FROM places')->fetchAll();
+
+        $this->send_json_response(true, '', $places);
+    }
 }
