@@ -1,165 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Mini Neshan</title>
+  <meta charset="utf-8" />
+  <title>My Map</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- استایل MapLibre -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
 
-    <style>
-        body { margin:0; font-family: sans-serif; }
-        #map { height: 90vh; }
-
-        .panel {
-            padding:10px;
-            background:#fff;
-            position:absolute;
-            top:10px;
-            left:10px;
-            z-index:1000;
-            width:250px;
-            box-shadow:0 0 10px rgba(0,0,0,0.2);
-            border-radius:8px;
-        }
-
-        input {
-            width:100%;
-            padding:8px;
-            margin-bottom:5px;
-        }
-
-        button {
-            width:100%;
-            padding:8px;
-            margin-top:5px;
-            cursor:pointer;
-        }
-
-        #info {
-            margin-top:10px;
-            font-size:14px;
-        }
-    </style>
+  <style>
+    body { margin: 0; }
+    #map { width: 100%; height: 100vh; }
+  </style>
 </head>
+
 <body>
-
-<div class="panel">
-    <input type="text" id="startInput" placeholder="مبدا">
-    <input type="text" id="endInput" placeholder="مقصد">
-
-    <button onclick="searchLocation('start')">انتخاب مبدا</button>
-    <button onclick="searchLocation('end')">انتخاب مقصد</button>
-
-    <button onclick="resetMap()">ریست</button>
-
-    <div id="info"></div>
-</div>
 
 <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- اسکریپت MapLibre -->
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 
 <script>
-var map = L.map('map').setView([34.352, 62.204], 12);
+  const map = new maplibregl.Map({
+    container: 'map',
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
+    // استایل رایگان از MapTiler (بدون API هم کار می‌کند در بعضی موارد)
+    style: 'https://demotiles.maplibre.org/style.json',
 
-let start = null;
-let end = null;
-let startMarker, endMarker, routeLine;
+    center: [62.2, 34.35], // هرات
+    zoom: 12
+  });
 
-// کلیک روی نقشه
-map.on('click', function(e) {
-    if (!start) {
-        setStart(e.latlng.lat, e.latlng.lng);
-    } else {
-        setEnd(e.latlng.lat, e.latlng.lng);
-        getRoute();
-    }
+  let marker;
+
+map.on('click', function (e) {
+
+  const lng = e.lngLat.lng;
+  const lat = e.lngLat.lat;
+
+  console.log('Lng:', lng, 'Lat:', lat);
+
+  // اگر قبلاً مارکر بود، حذفش کن
+  if (marker) {
+    marker.remove();
+  }
+
+  // ایجاد مارکر جدید
+  marker = new maplibregl.Marker()
+    .setLngLat([lng, lat])
+    .addTo(map);
+
 });
-
-// تنظیم مبدا
-function setStart(lat, lng) {
-    start = [lng, lat];
-
-    if (startMarker) map.removeLayer(startMarker);
-
-    startMarker = L.marker([lat, lng]).addTo(map).bindPopup('مبدا').openPopup();
-}
-
-// تنظیم مقصد
-function setEnd(lat, lng) {
-    end = [lng, lat];
-
-    if (endMarker) map.removeLayer(endMarker);
-
-    endMarker = L.marker([lat, lng]).addTo(map).bindPopup('مقصد').openPopup();
-}
-
-// گرفتن مسیر
-function getRoute() {
-    const url = `https://router.project-osrm.org/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
-
-    fetch(url)
-    .then(res => res.json())
-    .then(data => {
-        const route = data.routes[0];
-
-        const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
-
-        if (routeLine) map.removeLayer(routeLine);
-
-        routeLine = L.polyline(coords, {weight:5}).addTo(map);
-
-        map.fitBounds(routeLine.getBounds());
-
-        // نمایش اطلاعات
-        let distance = (route.distance / 1000).toFixed(2);
-        let duration = (route.duration / 60).toFixed(1);
-
-        document.getElementById('info').innerHTML =
-            `مسافت: ${distance} km <br> زمان: ${duration} دقیقه`;
-    });
-}
-
-// ریست
-function resetMap() {
-    start = null;
-    end = null;
-
-    if (startMarker) map.removeLayer(startMarker);
-    if (endMarker) map.removeLayer(endMarker);
-    if (routeLine) map.removeLayer(routeLine);
-
-    document.getElementById('info').innerHTML = '';
-}
-
-// جستجوی مکان (Nominatim)
-function searchLocation(type) {
-    let query = type === 'start'
-        ? document.getElementById('startInput').value
-        : document.getElementById('endInput').value;
-
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
-    .then(res => res.json())
-    .then(data => {
-        if (data.length === 0) return alert('پیدا نشد');
-
-        let lat = parseFloat(data[0].lat);
-        let lon = parseFloat(data[0].lon);
-
-        map.setView([lat, lon], 14);
-
-        if (type === 'start') {
-            setStart(lat, lon);
-        } else {
-            setEnd(lat, lon);
-            if (start) getRoute();
-        }
-    });
-}
 </script>
 
 </body>
