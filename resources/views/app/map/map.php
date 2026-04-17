@@ -1,210 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
 
 <head>
-    <meta charset="utf-8" />
-    <title>jayab</title>
+    <title>نقشه اختصاصی افغانستان - فاز ۱</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         #map {
-            height: 98vh;
+            height: 600px;
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        body {
+            font-family: 'Tahoma', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .info {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
         }
     </style>
 </head>
 
 <body>
 
+    <div class="info">
+        <h2>پروژه نقشه افغانستان</h2>
+        <p>در حال نمایش موقعیت فعلی شما و تست نام‌گذاری معابر...</p>
+    </div>
+
     <div id="map"></div>
 
-    <form action="<?= url('mapInfo/store') ?>" method="post">
-
-        <input type="text" id="name" name="name" placeholder="نام مکان">
-
-        <select name="type">
-            <option value="street">خیابان</option>
-            <option value="road">جاده</option>
-            <option value="alley">کوچه</option>
-            <option value="shop">فروشگاه</option>
-        </select>
-
-        <textarea id="description" name="description" placeholder="توضیحات"></textarea>
-
-        <input type="text" name="points" id="points">
-
-        <input type="text" id="lat" placeholder="lat" name="lat">
-        <input type="text" id="lng" placeholder="lng" name="lng">
-        <input type="text" name="street_name" placeholder="نام خیابان">
-        <input type="submit" id="submit" value="ذخیره">
-    </form>
-
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://orthoquis.github.io/Leaflet.TextPath/leaflet.textpath.js"></script>
+
     <script>
-        var map = L.map('map').setView([34.352, 62.204], 12);
+        // ۱. تنظیم نقشه روی مرکز افغانستان (کابل) به صورت پیش‌فرض
+        var map = L.map('map').setView([34.5553, 69.2075], 6);
+
+        // ۲. لود تایل‌های نقشه
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
             attribution: '© OpenStreetMap'
         }).addTo(map);
-    </script>
 
-    <!-- infos locations -->
-    <script>
-        var clickMarker;
-
-        map.on('click', function(e) {
-
-            var lat = e.latlng.lat;
-            var lng = e.latlng.lng;
-
-            if (clickMarker) {
-                map.removeLayer(clickMarker);
-            }
-
-            clickMarker = L.marker([lat, lng])
-                .addTo(map)
-                .bindPopup(
-                    "📍 مکان انتخاب شده<br>" +
-                    "Lat: " + lat.toFixed(6) + "<br>" +
-                    "Lng: " + lng.toFixed(6)
-                )
-                .openPopup();
+        // ۳. پیدا کردن موقعیت فعلی کاربر (User Location)
+        map.locate({
+            setView: true,
+            maxZoom: 16
         });
-    </script>
-    <style>
-        .map-label {
-            white-space: nowrap;
-            font-size: 13px;
-            font-weight: bold;
 
-            background: rgba(255, 255, 255, 0.9);
-            padding: 4px 10px;
-            border-radius: 8px;
-
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-
-            transform: translate(-50%, -50%);
+        function onLocationFound(e) {
+            var radius = e.accuracy / 2;
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("شما در این محدوده هستید").openPopup();
+            L.circle(e.latlng, radius).addTo(map);
         }
-    </style>
-    <!-- get my location -->
-    <script>
-        var userMarker;
 
-        if (navigator.geolocation) {
+        map.on('locationfound', onLocationFound);
 
-            navigator.geolocation.watchPosition(
-                function(position) {
-
-                    var lat = position.coords.latitude;
-                    var lng = position.coords.longitude;
-
-                    if (!userMarker) {
-
-                        userMarker = L.marker([lat, lng])
-                            .addTo(map)
-                            .bindPopup("📍 موقعیت شما")
-                            .openPopup();
-
-                        // فقط بار اول زوم کن
-                        map.setView([lat, lng], 15);
-
-                    } else {
-
-                        userMarker.setLatLng([lat, lng]);
-
-                    }
-
-                },
-                function(error) {
-                    console.log("GPS Error:", error.message);
-                }, {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: 5000
-                }
-            );
-
-        } else {
-            alert("GPS پشتیبانی نمی‌شود");
+        // مدیریت خطا در صورت عدم دسترسی به مکان
+        function onLocationFound(e) {
+            // فقط اضافه کردن مارکر بدون ترسیم دایره (L.circle حذف شد)
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("موقعیت فعلی شما").openPopup();
         }
-    </script>
+        map.on('locationerror', onLocationError);
 
-    <!-- get all locations -->
-    <script>
-        fetch("<?= url('get-places') ?>")
-            .then(res => res.json())
-            .then(res => {
+        // ۴. تست رسم یک خیابان (مثلاً در کابل) برای اطمینان از صحت کارکرد نام‌ها
+        var testRoad = [
+            [34.535, 69.150],
+            [34.537, 69.165],
+            [34.540, 69.180]
+        ];
 
-                if (!res.success || !res.data) return;
-
-                res.data.forEach(place => {
-
-                    if (place.points) {
-
-                        let coords = JSON.parse(place.points);
-
-                        let line = L.polyline(coords, {
-                            color: '#2b8cbe',
-                            weight: 4
-                        }).addTo(map);
-
-                        let center = line.getBounds().getCenter();
-
-                        L.marker(center, {
-                            icon: L.divIcon({
-                                className: 'map-label',
-                                html: place.name
-                            })
-                        }).addTo(map);
-                    }
-
-                });
-
-            });
-    </script>
-    <script>
-        let tempPoints = [];
-        let tempLine = null;
-
-        map.on('click', function(e) {
-
-            if (state.mode === "select") {
-                state.selectedPoint = e.latlng;
-                document.getElementById("lat").value = e.latlng.lat;
-                document.getElementById("lng").value = e.latlng.lng;
+        var polyline = L.polyline(testRoad, {
+            color: '#e74c3c',
+            weight: 6
+        }).addTo(map);
+        polyline.setText('خیابان نمونه فاز ۱', {
+            repeat: true,
+            offset: -10,
+            attributes: {
+                'font-weight': 'bold',
+                'fill': 'red'
             }
-
-            if (state.mode === "draw") {
-                state.points.push([e.latlng.lat, e.latlng.lng]);
-                document.getElementById("points").value = JSON.stringify(state.points);
-            }
-
         });
     </script>
-
-
-    <!-- get lat & lng for new name -->
-    <script>
-        var selectedPoint = null;
-
-        map.on('click', function(e) {
-
-            selectedPoint = {
-                lat: e.latlng.lat,
-                lng: e.latlng.lng
-            };
-
-            document.getElementById("lat").value = selectedPoint.lat;
-            document.getElementById("lng").value = selectedPoint.lng;
-
-            L.marker([selectedPoint.lat, selectedPoint.lng])
-                .addTo(map)
-                .bindPopup("مکان انتخاب شد")
-                .openPopup();
-
-        });
-    </script>
-
-
 </body>
 
 </html>
