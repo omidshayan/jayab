@@ -1,57 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>My Map</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>My Map</title>
 
-  <!-- استایل MapLibre -->
-  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <!-- استایل MapLibre -->
+    <link
+      href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
 
-  <style>
-    body { margin: 0; }
-    #map { width: 100%; height: 100vh; }
-  </style>
-</head>
+    <style>
+      body {
+        margin: 0;
+      }
+      #map {
+        width: 100%;
+        height: 100vh;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
+    <div id="map"></div>
 
-<div id="map"></div>
+    <!-- اسکریپت MapLibre -->
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 
-<!-- اسکریپت MapLibre -->
-<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <script>
+      const map = new maplibregl.Map({
+        container: "map",
 
-<script>
-  const map = new maplibregl.Map({
-    container: 'map',
+        // استایل رایگان از MapTiler (بدون API هم کار می‌کند در بعضی موارد)
+        style: "https://demotiles.maplibre.org/style.json",
 
-    // استایل رایگان از MapTiler (بدون API هم کار می‌کند در بعضی موارد)
-    style: 'https://demotiles.maplibre.org/style.json',
+        center: [62.2, 34.35], // هرات
+        zoom: 12,
+      });
 
-    center: [62.2, 34.35], // هرات
-    zoom: 12
-  });
+      let marker;
 
-  let marker;
+      map.on("click", function (e) {
+        const lng = e.lngLat.lng;
+        const lat = e.lngLat.lat;
 
-map.on('click', function (e) {
+        console.log("Lng:", lng, "Lat:", lat);
 
-  const lng = e.lngLat.lng;
-  const lat = e.lngLat.lat;
+        // اگر قبلاً مارکر بود، حذفش کن
+        if (marker) {
+          marker.remove();
+        }
 
-  console.log('Lng:', lng, 'Lat:', lat);
-
-  // اگر قبلاً مارکر بود، حذفش کن
-  if (marker) {
-    marker.remove();
-  }
-
-  // ایجاد مارکر جدید
-  marker = new maplibregl.Marker()
-    .setLngLat([lng, lat])
-    .addTo(map);
-
-});
-</script>
-
-</body>
+        // ایجاد مارکر جدید
+        marker = new maplibregl.Marker().setLngLat([lng, lat]).addTo(map);
+      });
+    </script>
+  </body>
 </html>

@@ -130,54 +130,55 @@
 
     <!-- get all locations -->
     <script>
-fetch("<?= url('get-places') ?>")
-.then(res => res.json())
-.then(res => {
+        fetch("<?= url('get-places') ?>")
+            .then(res => res.json())
+            .then(res => {
 
-    if (!res.success || !res.data) return;
+                if (!res.success || !res.data) return;
 
-    res.data.forEach(place => {
+                res.data.forEach(place => {
 
-        if (place.points) {
+                    if (place.points) {
 
-            let coords = JSON.parse(place.points);
+                        let coords = JSON.parse(place.points);
 
-            let line = L.polyline(coords, {
-                color: '#2b8cbe',
-                weight: 4
-            }).addTo(map);
+                        let line = L.polyline(coords, {
+                            color: '#2b8cbe',
+                            weight: 4
+                        }).addTo(map);
 
-            let center = line.getBounds().getCenter();
+                        let center = line.getBounds().getCenter();
 
-            L.marker(center, {
-                icon: L.divIcon({
-                    className: 'map-label',
-                    html: place.name
-                })
-            }).addTo(map);
-        }
+                        L.marker(center, {
+                            icon: L.divIcon({
+                                className: 'map-label',
+                                html: place.name
+                            })
+                        }).addTo(map);
+                    }
 
-    });
+                });
 
-});
+            });
     </script>
     <script>
-let tempPoints = [];
-let tempLine = null;
+        let tempPoints = [];
+        let tempLine = null;
 
-map.on('click', function(e) {
+        map.on('click', function(e) {
 
-    tempPoints.push([e.latlng.lat, e.latlng.lng]);
+            if (state.mode === "select") {
+                state.selectedPoint = e.latlng;
+                document.getElementById("lat").value = e.latlng.lat;
+                document.getElementById("lng").value = e.latlng.lng;
+            }
 
-    if (tempLine) {
-        map.removeLayer(tempLine);
-    }
+            if (state.mode === "draw") {
+                state.points.push([e.latlng.lat, e.latlng.lng]);
+                document.getElementById("points").value = JSON.stringify(state.points);
+            }
 
-    tempLine = L.polyline(tempPoints, { color: 'red' }).addTo(map);
-
-    document.getElementById("points").value =
-        JSON.stringify(tempPoints);
-});
+        });
     </script>
 
 
