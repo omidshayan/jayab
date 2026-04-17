@@ -3,7 +3,7 @@ require_once 'Http/Controllers/map/Map.php';
 
 //  profile routes
 uri('show/map', 'App\Map', 'showMap');
-uri('mapInfo/store', 'App\Map', 'mapInfoStore', 'POST');
+// uri('mapInfo/store', 'App\Map', 'mapInfoStore', 'POST');
 
 uri('get-map', 'App\Map', 'getMap');
 
@@ -11,6 +11,7 @@ uri('get-places', 'App\Map', 'getPlaces');
 
 
 
+uri('mapInfo/store', 'App\Map', 'mapInfoStore', 'POST');
 
 
 
